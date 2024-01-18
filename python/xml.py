@@ -132,21 +132,21 @@ class HTMLElement(XMLElement):
 
 
 '''Syntax Examples
-root = HTMLElement('svg',
+root = SVGElement('svg',
     xmlns = 'http://www.w3.org/2000/svg',
     width = 300,
     height = 300
 )
 
-group = HTMLElement('g',
+group = SVGElement('g',
     parent = root
 )
 
 group.comment('This group is an example.')
 
-group.add( HTMLElement('circle', cx=50, cy=50, r=20) )
+group.add( SVGElement('circle', cx=50, cy=50, r=20) )
 
-circle = HTMLElement('circle',
+circle = SVGElement('circle',
     parent = group,
     cx = 150,
     cy = 150,
