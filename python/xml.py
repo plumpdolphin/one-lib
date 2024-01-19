@@ -23,13 +23,12 @@ class XMLElement:
 
     def __init__(self, tag: str, parent = None, **kwargs):
         '''Initialize XML element from tag name. Attributes are optional.'''
-        self.tag = tag.lower()
         self.children = []
+        self.attrs = kwargs
+        self.tag = tag.lower()
 
         if parent:
             parent.add(self)
-
-        self.attrs = kwargs
 
     def add(self, element):
         '''Add element to children'''
@@ -57,14 +56,12 @@ class XMLElement:
         if (self.tag in self.VOID or 
             (not self.VOID and not self.children)):
             return self.FMT_VOID % (self.tag, attributes)
-            #return f'<{self.tag}{attributes}/>'
         
         # Else continue adding child elements
         children = ''.join([str(x) for x in self.children])
 
         # Return whole element
         return self.FMT_STANDARD % (self.tag, attributes, children, self.tag)
-        # return f'<{self.tag}{attributes}>{children}</{self.tag}>'
 
 
     @property
@@ -132,10 +129,12 @@ class HTMLElement(XMLElement):
 
 
 '''Syntax Examples
+'''
 root = SVGElement('svg',
     xmlns = 'http://www.w3.org/2000/svg',
     width = 300,
-    height = 300
+    height = 300,
+    pretty=True
 )
 
 group = SVGElement('g',
@@ -154,4 +153,3 @@ circle = SVGElement('circle',
 )
 
 open('output.svg', 'w').write( str(root) )
-'''
