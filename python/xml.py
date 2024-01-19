@@ -18,8 +18,10 @@ class XMLElement:
     '''Implements base class representation and functionality for XML-derived structures.'''
     VOID = []
 
-    FMT_VOID     = '<%s%s/>'
-    FMT_STANDARD = '<%s%s>%s</%s>'
+    FMT_ATTRIBUTE = '%s="%s"'
+    FMT_COMMENT   = '<!--%s-->'
+    FMT_STANDARD  = '<%s%s>%s</%s>'
+    FMT_VOID      = '<%s%s/>'
 
     def __init__(self, tag: str, parent = None, **kwargs):
         '''Initialize XML element from tag name. Attributes are optional.'''
@@ -37,14 +39,14 @@ class XMLElement:
 
     def comment(self, text):
         '''Adds a comment to the XML element.'''
-        self.children.append(f'<!--{text}-->')
+        self.children.append(self.FMT_COMMENT % text)
     
     def __str__(self):
         '''Convert Element object into XML string representation.'''
         # Create list of key value pairs in XML attribute format
         arr = [
-            f'{str(key)}="{str(value)}"'
-            for key, value in self.attrs.items()
+            self.FMT_ATTRIBUTE % attr
+            for attr in self.attrs.items()
         ]
 
         # Append attributes
