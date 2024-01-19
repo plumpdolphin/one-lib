@@ -126,32 +126,3 @@ class HTMLElement(XMLElement):
     ]
 
     FMT_VOID = '<%s%s>'
-
-
-
-
-'''Syntax Examples
-'''
-root = SVGElement('svg',
-    xmlns = 'http://www.w3.org/2000/svg',
-    width = 300,
-    height = 300,
-    pretty=True
-)
-
-group = SVGElement('g',
-    parent = root
-)
-
-group.comment('This group is an example.')
-
-group.add( SVGElement('circle', cx=50, cy=50, r=20) )
-
-circle = SVGElement('circle',
-    parent = group,
-    cx = 150,
-    cy = 150,
-    r = 10
-)
-
-open('output.svg', 'w').write( str(root) )
