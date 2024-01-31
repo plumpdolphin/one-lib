@@ -1,4 +1,21 @@
+'''
+Author: PlumpDolphin
+Date: January 30, 2024
+
+Description: 
+    Provides functions for minifying a variety of languages.
+
+License:
+    The code in this file is licensed under the
+    Revised 3-Clause BSD License.
+    For details, see https://opensource.org/licenses/BSD-3-Clause
+'''
+
+
+
 import re
+
+
 
 def css(str):
     # Remove newlines
