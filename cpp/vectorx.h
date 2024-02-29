@@ -82,11 +82,11 @@
 #define _MEMBER_INITIALIZER_DEFAULT(str, is_end, ...) _MEMBER_INITIALIZER_DEF##is_end(str, DEFAULT_MEMBER_VALUE)
 
 #define _INSERTION_STR0(str) str << ", " <<
-#define _INSERTION_STR1(str) str << ")";
+#define _INSERTION_STR1(str) str << ")"
 #define _INSERTION_STR(str, is_end, ...) _INSERTION_STR##is_end(str)
 
 #define _INSERTION_JSON0(str) str << "," <<
-#define _INSERTION_JSON1(str) str << "]";
+#define _INSERTION_JSON1(str) str << "]"
 #define _INSERTION_JSON(str, is_end, ...) _INSERTION_JSON##is_end(str)
 
 
