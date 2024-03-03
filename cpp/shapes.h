@@ -209,7 +209,7 @@ public:
 
     // Transformative functions
     // Scales the circle from it's own origin point
-    void scale(T scalar) { radius *= scalar; }
+    void scale(T scalar) override { radius *= scalar; }
 
 
 
