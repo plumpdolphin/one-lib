@@ -26,6 +26,41 @@
 
 
 
+// Example usage showing manipulations on some basic shapes.
+/*
+    // Create a circle using floating-point units.
+    Circle<float> c(5, -1, -7);
+
+    // Create a rectangle using integer units.
+    // Construction can also be deferred like this, or using a standard constructor method. 
+    Rectangle<int> r;
+    r.size = {4, 8}; 
+    r.position = {0, 0};
+
+    // Scale up the circle by a factor of 10.
+    c.scale(10);
+
+    // Save the position of the circle.
+    auto oldPos = c.position;
+
+    // Move circle to position (6, 7)
+    c.moveTo(6, 7);
+
+    // Scale by a factor of 2 relative to the circle's previous position
+    c.scaleFrom(2, oldPos);
+
+    // Rotate around the rectangle's position in global space by 180 degrees.
+    r.rotateFrom(180, r.position); 
+
+    // Print out the circle as a string
+    std::cout << c.str() << std::endl;
+
+    // Print out the rectangle as json
+    std::cout << r.json() << std::endl;
+*/
+
+
+
 // This specifies the type used for rotation values.
 // This can be changed here to your desired type such as a double for more precise calculation.
 typedef float Angle;
@@ -236,11 +271,11 @@ public:
 
     // Transformative functions
     void scale(T scalar) override { size *= scalar; }
-    void scale(T x, T y) override { 
+    void scale(T x, T y) { 
         size.x *= x; 
         size.y *= y; 
     }
-    void scale(Vector2<T> scale) override{ size *= scale; }
+    void scale(Vector2<T> scale) { size *= scale; }
 
 
 
