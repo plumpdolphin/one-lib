@@ -322,7 +322,7 @@ public:
 
 
 
-// This class represents symmetrical  N-Gons only.
+// This class represents regular N-Gons only.
 // For asymmetrical N-gons, use the Polygon class. (Coming soon)
 template <typename T>
 class NGon : public Shape2D<T> {
