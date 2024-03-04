@@ -57,6 +57,13 @@
 
     // Print out the rectangle as json
     std::cout << r.json() << std::endl;
+
+    // Create NGon with 5 points and circumradius of 5
+    NGon<float> n(5, 5);
+
+    // Print out features of n-gon
+    std::cout << n.inradius() << std::endl;
+    std::cout << n.str() << std::endl;
 */
 
 
@@ -307,6 +314,82 @@ public:
     std::string json() {
         std::stringstream ss;
         ss << "{\"size\":" << size.json() << "," << Shape2D<T>::json() << "}";
+        return ss.str();
+    }
+};
+
+
+
+
+
+// This class represents symmetrical  N-Gons only.
+// For asymmetrical N-gons, use the Polygon class. (Coming soon)
+template <typename T>
+class NGon : public Shape2D<T> {
+public:
+    // Data
+    size_t N; // Number of vertices
+    T radius; // This represents the N-Gon's circumradius.
+
+
+
+    // Default constructor
+    NGon()
+        : N(0), radius(0) {}
+
+    // Count constructor
+    NGon(size_t count)
+        : N(count), radius(0) {}
+
+    // Count and size constructor
+    NGon(size_t count, T radius)
+        : N(count), radius(radius) {}
+
+    // Size and position constructor
+    NGon(size_t count, T radius, T positionX, T positionY)
+        : N(count), radius(radius), Shape2D<T>(positionX, positionY) {}
+    NGon(size_t count, T radius, Vector2<T> position)
+        : N(count), radius(radius), Shape2D<T>(position) {}
+
+    // Count, size, position, and rotation constructor
+    NGon(size_t count, T radius, T positionX, T positionY, Angle rotation)
+        : N(count), radius(radius), Shape2D<T>(positionX, positionY, rotation) {}
+    NGon(size_t count, T radius, Vector2<T> position, Angle rotation)
+        : N(count), radius(radius), Shape2D<T>(position, rotation) {}
+
+
+
+    // Utility functions
+    constexpr Angle centralAngle() { return 360 / N; }
+    constexpr Angle innerAngle()   { return 180 - centralAngle(); }
+    
+    constexpr T edge() { return 2 * sin(M_PI / N) * radius; }
+    constexpr T circumradius() { return radius; }
+    constexpr T inradius() { return radius * cos(M_PI / N); }
+
+    constexpr T perimeter() override { return edge() * N; }
+    constexpr T area() override { 
+        T e = edge();
+        return (N * e * e) / (4 * tan(M_PI / N)); 
+    }
+
+
+
+    // Transformative functions
+    void scale(T scalar) override { radius *= scalar; }
+
+
+
+    // Serializers
+    std::string str() {
+        std::stringstream ss;
+        ss << "NGon { N: " << N << ", radius: " << radius << ", " << Shape2D<T>::str() << " }";
+        return ss.str();
+    }
+
+    std::string json() {
+        std::stringstream ss;
+        ss << "{\"N\":" << N << ",\"radius\":" << radius << "," << Shape2D<T>::json() << "}";
         return ss.str();
     }
 };
