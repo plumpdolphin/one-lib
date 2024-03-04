@@ -111,6 +111,12 @@ public:
 
 
 
+    // Utility functions
+    virtual T area() = 0;
+    virtual T perimeter() = 0;
+
+
+
     // Transformative functions
     // Any function with two implementations will call the other by default.
 
@@ -207,6 +213,12 @@ public:
 
 
 
+    // Utility functions
+    T area() override { return M_PI * radius * radius; }
+    T perimeter() override { return 2 * M_PI * radius; }
+
+
+
     // Transformative functions
     // Scales the circle from it's own origin point
     void scale(T scalar) override { radius *= scalar; }
@@ -266,6 +278,12 @@ public:
         : size(size), Shape2D<T>(positionX, positionY, rotation) {}
     Rectangle(Vector2<T> size, Vector2<T> position, T rotation)
         : size(size), Shape2D<T>(position, rotation) {}
+
+
+
+    // Utility functions
+    T area() override { return size.x * size.y; }
+    T perimeter() override { return (size.x * 2) + (size.y * 2); }
 
 
 
