@@ -206,16 +206,16 @@ public:
         : radius(radius), Shape2D<T>(position) {}
 
     // Size, position, and rotation constructor
-    Circle(T radius, T positionX, T positionY, T rotation)
+    Circle(T radius, T positionX, T positionY, Angle rotation)
         : radius(radius), Shape2D<T>(positionX, positionY, rotation) {}
-    Circle(T radius, Vector2<T> position, T rotation)
+    Circle(T radius, Vector2<T> position, Angle rotation)
         : radius(radius), Shape2D<T>(position, rotation) {}
 
 
 
     // Utility functions
-    T area() override { return M_PI * radius * radius; }
-    T perimeter() override { return 2 * M_PI * radius; }
+    constexpr T area() override { return M_PI * radius * radius; }
+    constexpr T perimeter() override { return 2 * M_PI * radius; }
 
 
 
@@ -270,20 +270,20 @@ public:
         : size(size), Shape2D<T>(position) {}
 
     // Size, position, and rotation constructor
-    Rectangle(T width, T height, T positionX, T positionY, T rotation)
+    Rectangle(T width, T height, T positionX, T positionY, Angle rotation)
         : size(width, height), Shape2D<T>(positionX, positionY, rotation) {}
-    Rectangle(T width, T height, Vector2<T> position, T rotation)
+    Rectangle(T width, T height, Vector2<T> position, Angle rotation)
         : size(width, height), Shape2D<T>(position, rotation) {}
-    Rectangle(Vector2<T> size, T positionX, T positionY, T rotation)
+    Rectangle(Vector2<T> size, T positionX, T positionY, Angle rotation)
         : size(size), Shape2D<T>(positionX, positionY, rotation) {}
-    Rectangle(Vector2<T> size, Vector2<T> position, T rotation)
+    Rectangle(Vector2<T> size, Vector2<T> position, Angle rotation)
         : size(size), Shape2D<T>(position, rotation) {}
 
 
 
     // Utility functions
-    T area() override { return size.x * size.y; }
-    T perimeter() override { return (size.x * 2) + (size.y * 2); }
+    constexpr T area() override { return size.x * size.y; }
+    constexpr T perimeter() override { return (size.x * 2) + (size.y * 2); }
 
 
 
