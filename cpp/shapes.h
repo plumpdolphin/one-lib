@@ -90,6 +90,10 @@ T to_degrees(T radians) {
 
 template <typename T> constexpr
 Vector2<T> rotate_point(Vector2<T> position, Vector2<T> origin, Angle degrees) {
+    // Check easy return case
+    if (degrees == 0)
+        return position;
+
     // Get X and Y difference of position and the rotation origin.
     Vector2<T> diff = position - origin;
 
@@ -255,8 +259,9 @@ public:
         }
 
         // Rotate vertices by shapes's rotation value
-        for (auto &v: vertex_list) 
-            v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
+        if (rotation != 0)
+            for (auto &v: vertex_list) 
+                v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
 
         // Return rotated vertices list
         return vertex_list;
@@ -451,8 +456,9 @@ public:
         }
 
         // Rotate vertices by shapes's rotation value
-        for (auto &v: vertex_list) 
-            v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
+        if (rotation != 0)
+            for (auto &v: vertex_list) 
+                v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
 
         // Return rotated vertices list
         return vertex_list;
