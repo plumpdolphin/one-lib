@@ -88,24 +88,6 @@ T to_degrees(T radians) {
     return (radians * 180) / M_PI;
 }
 
-template <typename T> constexpr
-Vector2<T> rotate_point(Vector2<T> position, Vector2<T> origin, Angle degrees) {
-    // Get X and Y difference of position and the rotation origin.
-    Vector2<T> diff = position - origin;
-
-    // Calculate sin and cosine of angle
-    Angle radians = to_radians(degrees);
-    auto cd = cos(radians);
-    auto sd = sin(radians);
-
-    // Perform the rotation on the difference vector
-    // Because it is offset from the rotation origin, this is considered in local space.
-    auto x = (diff.x * cd) - (diff.y * sd);
-    auto y = (diff.x * sd) + (diff.y * cd);
-
-    // Offset by rotation origin again to get global position.
-    return Vector2<T>(x, y) + origin;
-}
 
 
 
@@ -140,8 +122,10 @@ public:
     // Utility functions
     virtual T area() = 0;
     virtual T perimeter() = 0;
-    
-    virtual std::vector<Vector2<T>> vertices() = 0;
+
+    // Returns a list of vertices
+    virtual std::vector<Vector2<T>> vertices() {};
+
 
 
     // Transformative functions
@@ -154,9 +138,22 @@ public:
     virtual void rotateFrom(Angle degrees, Vector2<T> origin) {
         // Call rotate to correct object rotation angle
         rotate(degrees);
-        
-        // Rotate position around origin point
-        position = rotate_point(position, origin, degrees);
+
+        // Get X and Y difference of shape's position and the rotation origin.
+        Vector2<T> diff = position - origin;
+
+        // Calculate sin and cosine of angle
+        Angle radians = to_radians(degrees);
+        auto cd = cos(radians);
+        auto sd = sin(radians);
+
+        // Perform the rotation on the difference vector
+        // Because it is offset from the rotation origin, this is considered in local space.
+        auto x = (diff.x * cd) - (diff.y * sd);
+        auto y = (diff.x * sd) + (diff.y * cd);
+
+        // Offset by rotation origin again to get global position.
+        position = Vector2<T>(x, y) + origin;
     }
 
     // Moves the shape from it's current position by some offset.
@@ -194,6 +191,8 @@ public:
         ss << "\"position\":" << position.json() << ",\"rotation\":" << rotation;
         return ss.str();
     }
+
+    virtual std::string svg() {};
 };
 
 
@@ -234,33 +233,6 @@ public:
     constexpr T area() override { return M_PI * radius * radius; }
     constexpr T perimeter() override { return 2 * M_PI * radius; }
 
-    // Call to render the circle to a default, fixed number of verticies
-    constexpr std::vector<Vector2<T>> vertices() override { return vertices(64); }
-
-    // Renders the circle to a list of vertices of a specified count
-    constexpr std::vector<Vector2<T>> vertices(size_t resolution) {
-        // Get central angle for given resolution
-        Angle angle_central = -360 / static_cast<Angle>(resolution);
-
-        // Defines the container for resulting verticies
-        std::vector<Vector2<T>> vertex_list(resolution);
-
-        // Iterate through each point and add to vertex list.
-        for (size_t i = 0; i < resolution; i++) {
-            // Calculate degrees of rotation for given vertex
-            Angle v_rotation = angle_central * i;
-
-            // Rotate point around circle's center
-            vertex_list[i] = rotate_point(Vector2<T>(0, radius), Shape2D<T>::position, v_rotation);
-        }
-
-        // Rotate vertices by shapes's rotation value
-        for (auto &v: vertex_list) 
-            v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
-
-        // Return rotated vertices list
-        return vertex_list;
-    }
 
 
     // Transformative functions
@@ -280,6 +252,10 @@ public:
         std::stringstream ss;
         ss << "{\"radius\":" << radius << "," << Shape2D<T>::json() << "}";
         return ss.str();
+    }
+
+    std::string svg() {
+
     }
 };
 
@@ -329,30 +305,17 @@ public:
     constexpr T area() override { return size.x * size.y; }
     constexpr T perimeter() override { return (size.x * 2) + (size.y * 2); }
 
+    /*
     constexpr std::vector<Vector2<T>> vertices() override {
-        // Calculate half of size for offsets
-        Vector2<T> hs = size / 2;
+        auto hs = size / 2;
 
-        // Provider simpler aliases for base class variables
-        auto position = Shape2D<T>::position;
-        auto rotation = Shape2D<T>::rotation;
-
-        // Define vertices
-        std::vector<Vector2<T>> vertex_list = {
-            position - hs,                      // Top left
-            Vector2<T>(hs.x, -hs.y) + position, // Top right
-            hs + position,                      // Bottom right
-            Vector2<T>(-hs.x, hs.y) + position, // Bottom left
+        std::vector<Vector2<T>> v = {
+            -hs + position
         };
 
-        // Rotate all vertices by shape's rotation value
-        if (rotation != 0)
-            for (auto &v: vertex_list) 
-                v = rotate_point(v, position, rotation);
-
-        // Return rotated vertices list
-        return vertex_list;
     }
+    */
+
 
 
     // Transformative functions
@@ -375,6 +338,19 @@ public:
     std::string json() {
         std::stringstream ss;
         ss << "{\"size\":" << size.json() << "," << Shape2D<T>::json() << "}";
+        return ss.str();
+    }
+
+    std::string svg() {
+        auto position = Shape2D<T>::position;
+        auto rotation = Shape2D<T>::rotation;
+
+        std::stringstream ss;
+        ss << "<g transform=\"translate(" << position.x << "," << position.y << ")\">";
+        ss << "<rect width=\"" << size.x << "\" height=\"" << size.y;
+        ss << "\" x=\"" << static_cast<double>(size.x) / -2 << "\" y=\"" << static_cast<double>(size.y) / -2;
+        ss << "\" transform=\"rotate(" << rotation << ")\"/>";
+        ss << "</g>"; 
         return ss.str();
     }
 };
@@ -434,29 +410,7 @@ public:
         return (N * e * e) / (4 * tan(M_PI / N)); 
     }
 
-    constexpr std::vector<Vector2<T>> vertices() {
-        // Store value of central angle
-        auto angle_central = -centralAngle();
-
-        // Defines the container for resulting verticies
-        std::vector<Vector2<T>> vertex_list(N);
-
-        // Iterate through each point and add to vertex list.
-        for (size_t i = 0; i < N; i++) {
-            // Calculate degrees of rotation for given vertex
-            Angle v_rotation = angle_central * i;
-
-            // Rotate point around circle's center
-            vertex_list[i] = rotate_point(Vector2<T>(0, radius), Shape2D<T>::position, v_rotation);
-        }
-
-        // Rotate vertices by shapes's rotation value
-        for (auto &v: vertex_list) 
-            v = rotate_point(v, Shape2D<T>::position, Shape2D<T>::rotation);
-
-        // Return rotated vertices list
-        return vertex_list;
-    }
+    std::vector<Vector2<T>> vertices() {}
 
 
 
@@ -477,4 +431,6 @@ public:
         ss << "{\"N\":" << N << ",\"radius\":" << radius << "," << Shape2D<T>::json() << "}";
         return ss.str();
     }
+
+    std::string svg() { return ""; }
 };
