@@ -54,9 +54,11 @@ class XMLElement:
         if len(arr) > 0:
             attributes = ' ' + ' '.join(arr)
 
-        # If element is a void element, return
-        if (self.tag in self.VOID or 
-            (not self.VOID and not self.children)):
+        # If it is a void element. Or if no VOID elements
+        # are specified, such as in pure XML, and there are no children.
+        if self.tag in self.VOID or
+           (not self.VOID and not self.children): 
+            # Render as a void element and return
             return self.FMT_VOID % (self.tag, attributes)
         
         # Else continue adding child elements
