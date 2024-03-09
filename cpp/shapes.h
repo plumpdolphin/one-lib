@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector> // Include vector lists
 #include <cmath>
 
 #include "vectorx.h" // Includes definition for Vector2<T> required for the shapes.
@@ -123,15 +124,17 @@ public:
     virtual T perimeter() = 0;
 
 
-
     // Transformative functions
     // Any function with two implementations will call the other by default.
 
     // This way, only one function must be implemented by the inheriting class.
-    virtual void rotate(Angle degrees) {}
+    virtual void rotate(Angle degrees) { rotation += degrees; }
 
     virtual void rotateFrom(Angle degrees, T x, T y) { rotateFrom(degrees, Vector2<T>(x, y)); }
     virtual void rotateFrom(Angle degrees, Vector2<T> origin) {
+        // Call rotate to correct object rotation angle
+        rotate(degrees);
+
         // Get X and Y difference of shape's position and the rotation origin.
         Vector2<T> diff = position - origin;
 
