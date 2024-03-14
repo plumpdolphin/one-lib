@@ -102,6 +102,17 @@
 
 
 
+// Comparison helper functions
+#define _EQ0(dim) (dim == other.dim) &
+#define _EQ1(dim) (dim == other.dim)
+#define _EQ(dim, is_end, ...) _EQ##is_end(dim)
+
+#define _NEQ0(dim) (dim != other.dim) |
+#define _NEQ1(dim) (dim != other.dim)
+#define _NEQ(dim, is_end, ...) _NEQ##is_end(dim)
+
+
+
 /*** Defines template for creating operator implementations for scalar values and other Vector types. ***/
 #define _VECTOR_OP(op, dim)                                     \
     /* Create new vector, scales all dimensions, and returns */ \
@@ -132,6 +143,19 @@
 
 
 
+/*** Defines template for creating comparator implementations between vectors. ***/
+#define _VECTOR_COMP(dim)                        \
+    bool operator== (const Vector##dim& other) { \
+        return _VECTOR_DIMS_##dim( _EQ );        \
+    }                                            \
+                                                 \
+    bool operator!= (const Vector##dim& other) { \
+        return _VECTOR_DIMS_##dim( _NEQ );       \
+    }
+
+
+
+
 /*** Defines template for each Vector class implementation ***/
 #define _VECTOR_DEF(dim)                                           \
     template<typename T>                                           \
@@ -147,7 +171,10 @@
             : _VECTOR_DIMS_##dim( _MEMBER_INITIALIZER_DEF ) {}     \
                                                                    \
         /* Implements all of the supported operators */            \
-        OPERATORS(_VECTOR_OP, dim)                                 \
+        OPERATORS( _VECTOR_OP, dim )                               \
+                                                                   \
+        /* Implements all of the supported comparators */          \
+        _VECTOR_COMP( dim )                                        \
                                                                    \
         /* Imlements string conversion for all dimensions */       \
         std::string str() {                                        \
@@ -245,6 +272,14 @@ _VECTOR_DEF(5)
 #undef _SCALE_OTHER_THIS
 #undef _SCALE_SCALAR_NEW
 #undef _SCALE_SCALAR_THIS
+
+#undef _EQ
+#undef _EQ0
+#undef _EQ1
+
+#undef _NEQ
+#undef _NEQ0
+#undef _NEQ1
 
 #undef _VECTOR_OP
 #undef _VECTOR_DEF
